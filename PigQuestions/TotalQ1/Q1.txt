@@ -1,0 +1,17 @@
+
+A = load 'Xcovid.csv' using Pigstore(',') AS (iso_code: chararray, continent:chararray, 
+location: chararray ,date: datetime, total_cases: int, new_cases: int, total_deaths: int,new_deaths: int);
+
+
+A = foreach covid generate continent , new_deaths;
+
+
+B = filter A by continent  == 'Africa';
+
+
+Grpafrica = group B by continent;
+
+
+SumAfr = foreach Grpafrica generate group, SUM(B.new_deaths) As TotalDeaths;
+
+dump SumAfr; 

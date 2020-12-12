@@ -1,0 +1,17 @@
+
+ratings = load 'u.data' as (userID: int, movieID;int, rating:int, time:chararray);
+items = load 'u.item' USING pigstore (',') as (movieID: int, movieTitle: chararray);
+
+FLTRating = filter ratings by rating == 5;
+
+
+jnd = JOIN FLTRating by movieID, items by movieID;
+
+
+grp = group jnd by (FLTRating::movieID, items::movieTitle);
+
+
+USRCount = foreach grp generate group, COUNT(jnd.FLTRating::userID) AS numUSR;
+
+
+dump USRcount;

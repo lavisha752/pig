@@ -1,0 +1,16 @@
+
+A = load 'Xcovid.csv' using Pigstore(',') AS (iso_code: chararray, continent:chararray, 
+location: chararray ,date: datetime, total_cases: int, new_cases: int, total_deaths: int,new_deaths: int);
+
+
+B = FOREACH A GENERATE date,location,new_cases;
+
+
+C = ORDER B  by new_cases desc;
+
+
+D = LIMIT C 1;
+
+
+DUMP D;
+ 

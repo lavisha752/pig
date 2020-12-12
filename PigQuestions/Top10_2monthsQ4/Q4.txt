@@ -1,0 +1,27 @@
+
+A = load 'Xcovid.csv' using Pigstore(',') AS (iso_code: chararray, continent:chararray, 
+location: chararray ,date: datetime, total_cases: int, new_cases: int, total_deaths: int,new_deaths: int);
+
+B = GROUP A BY location;
+
+
+required_location = FOREACH B (
+         location_sorted_by_no = ORDER A BY new_cases DESC;
+         top_record = LIMIT location_sorted_by_no 1;
+         GENERATE FLATTEN(top_record);
+)
+
+F = FILTER required_location BY date >= '01/09/2020';
+ 
+C = FOREACH F GENERATE location, new_cases;
+
+
+D = ORDER C BY $ 1 desc;
+
+
+The data is the limited to 10 so that the ouput is the Top 10 countries
+E = LIMIT D 10;
+
+
+Outputs the result
+DUMP E;

@@ -1,0 +1,19 @@
+--Loading both datasets
+ratings = load 'u.data' as (userID: int, movieID:int, rating: int, time:chararray);
+items = load 'u.item' USING PigStorage ('|') as (movieID: int, movieTitle: chararray);
+
+--Filtering the first dataset by the required condition
+FLTRating = filter ratings by rating == 5;
+
+--Use the JOIN method to link both datasets using the Primary key MovieID
+jnd = JOIN FLTRating by movieID, items by movieID;
+
+--Here, the first dataset FLTRating with movieID  and the 2nd dataset items with movieTitle are grouped together.
+--movieTitle is grouped with movieID because the ID shall be displayed along with the movieTitle
+grp = group jnd by (FLTRating::movieID, items::movieTitle);
+
+--This part counts the number of that rated the 
+USRCount = foreach grp generate group, COUNT(jnd.FLTRating::userID) AS numUSR;
+
+--Output the result
+dump USRCount;
